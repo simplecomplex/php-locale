@@ -1,0 +1,24 @@
+{
+    "name": "simplecomplex/locale",
+    "type": "library",
+    "description": "Locale utilities, .ini configuration based localisation.",
+    "keywords": ["configuration", "locale", "PHP"],
+    "homepage": "https://github.com/simplecomplex/php-locale",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jacob Friis Mathiasen",
+            "email": "jacob.friis@simplecomplex.net"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "simplecomplex/utils": "dev-develop",
+        "simplecomplex/config": "dev-develop"
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleComplex\\Locale\\": "src/"
+        }
+    }
+}
