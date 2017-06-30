@@ -20,15 +20,31 @@ use SimpleComplex\Config\SectionedConfigInterface;
  *
  * @package SimpleComplex\Locale
  */
-class Locale
+abstract class AbstractLocale
 {
-
     /**
      * Config var default section.
      *
      * @var string
      */
     const CONFIG_SECTION = 'lib_simplecomplex_locale';
+
+    const TEMPORAL = [
+        'datePartSequence' => 'Ymd',
+    ];
+
+    const NUMERIC = [
+        'decimalMark' => '.',
+        'thousandSeparator' => ' ',
+        'noFractionMark' => '/-',
+    ];
+
+    const CURRENCY = [
+        'money' => '¤',
+    ];
+
+    const WEEKDAY_FIRST = 'sunday';
+
 
     /**
      * Config vars, and their effective defaults:
@@ -51,26 +67,6 @@ class Locale
      * @var LocaleText
      */
     protected $text;
-
-    /**
-     * Values: ltr|rtl.
-     *
-     * @var string
-     */
-    protected $textDirection = 'ltr';
-
-    /**
-     * Values: must consist of chars Y, m and d.
-     *
-     * @var string
-     */
-    protected $dateSequence = 'Ymd';
-
-
-
-    protected $decimalMark = '.';
-    protected $thousandSeparator = ' ';
-    protected $noFractionMark = ' ';
 
     /**
      * @param SectionedConfigInterface $config
@@ -101,23 +97,5 @@ class Locale
      *
      * @return mixed|null
      */
-    public function text(string $section, string $key, $default = '')
-    {
-        return $this->text->get($section, $key, $default);
-    }
-
-    /**
-     * Uppercases last if the language's text direction is right-to-left.
-     *
-     * @param mixed $var
-     *      Gets stringified.
-
-     * @return string
-     */
-    public function toUpperCaseFirst($var)
-    {
-        return $this->textDirection = 'ltr' ?
-            $this->unicode->toUpperCaseFirst($var) :
-            $this->unicode->toUpperCaseLast($var);
-    }
+    abstract public function text(string $section, string $key, $default = '');
 }

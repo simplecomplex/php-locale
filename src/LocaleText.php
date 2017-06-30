@@ -39,7 +39,7 @@ class LocaleText extends IniSectionedFlatConfig
      * LocaleText constructor.
      *
      * @param string $language
-     *      Lisp-cased; 'en' or 'en-gb'.
+     *      Lisp-cased; 'en-gb'.
      * @param string[] $paths
      */
     public function __construct(string $language, array $paths)
@@ -47,6 +47,10 @@ class LocaleText extends IniSectionedFlatConfig
         if (!$language) {
             throw new \InvalidArgumentException('Arg language cannot be empty.');
         }
+
+        $this->fileExtensions = [
+            'locale-text.' . $language . '.ini',
+        ];
 
         parent::__construct('locale-text_' . $language, $paths);
     }
