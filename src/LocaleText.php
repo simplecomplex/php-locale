@@ -23,6 +23,29 @@ use SimpleComplex\Config\IniSectionedFlatConfig;
 class LocaleText extends IniSectionedFlatConfig
 {
     /**
+     * Expects and will handle illegal .ini key names.
+     *
+     * @see \SimpleComplex\Config\IniConfigBase::$escapeSourceKeys
+     *
+     * @var bool
+     */
+    protected $escapeSourceKeys = true;
+
+    /**
+     * Overridden with empty to make constructor argument paths rule.
+     *
+     * @var string[]
+     */
+    const PATH_DEFAULTS = [];
+
+    /**
+     * Overridden with empty to make constructor argument paths rule.
+     *
+     * @var string[]
+     */
+    protected $paths = [];
+
+    /**
      * LocaleText constructor.
      *
      * @param string $language

@@ -89,6 +89,6 @@ class Locale
         $class_locale = $localeToClass[$locale_final];
 
         /** @var AbstractLocale */
-        return new $class_locale($language_final);
+        return new $class_locale($config, $language_final);
     }
 }

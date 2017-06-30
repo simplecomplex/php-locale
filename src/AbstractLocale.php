@@ -175,7 +175,7 @@ abstract class AbstractLocale extends Explorable
             $language = $config->get(static::CONFIG_SECTION, 'localeToLanguage')[$this->locale];
         }
         $this->language = $language;
-        $this->text = new LocaleText($language, $config->get(static::CONFIG_SECTION, 'text_paths', []));
+        $this->text = new LocaleText($language, $config->get(static::CONFIG_SECTION, 'localeTextPaths', []));
     }
 
     /**
