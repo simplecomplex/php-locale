@@ -1,3 +1,8 @@
+SimpleComplex/Locale 1.x, 2017-06-30
+------------------------------------
+- Configuration, texts, locale/language mapper, abstract and a few concrete
+  locale classes.
+
 SimpleComplex/Locale 1.x, 2017-06-29
 ------------------------------------
 - Initial.

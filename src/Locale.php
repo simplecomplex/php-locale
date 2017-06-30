@@ -9,50 +9,86 @@ declare(strict_types=1);
 
 namespace SimpleComplex\Locale;
 
-use SimpleComplex\Utils\Unicode;
 use SimpleComplex\Config\SectionedConfigInterface;
 
 /**
- * ???
+ * Helper which maps locale and/or language to supported/default.
  *
- * @property-read string $locale
- * @property-read string $language
+ * If locale is known/asserted and known to be supported then it is far more
+ * efficient to instantiate the appropriate Locale[locale code] class directly.
  *
  * @package SimpleComplex\Locale
  */
 class Locale
 {
     /**
-     * @param SectionedConfigInterface $config
-     * @param string $locale
-     * @param string $language
+     * @var string
      */
-    public function __construct(SectionedConfigInterface $config, string $locale = '', string $language = '')
-    {
-        $this->config = $config;
-
-        $this->unicode = Unicode::getInstance();
-
-        $this->locale = str_replace('_', '-', strtolower($locale));
-        $this->language = $language ? str_replace('_', '-', strtolower($language)) : $this->locale;
-
-
-
-
-        $this->locale = $this->language = strtolower($locale);
-
-        $this->text = new LocaleText($locale, $config->get(static::CONFIG_SECTION, 'text_paths', []));
-    }
+    const CONFIG_SECTION = 'lib_simplecomplex_locale';
 
     /**
-     * @param string $section
-     * @param string $key
-     * @param string|array $default
+     * @param SectionedConfigInterface $config
+     * @param string $locale
+     *      Formats supported: en, en_US, en_us, en-US, en-us.
+     * @param string $language
+     *      Formats supported: en, en_US, en_us, en-US, en-us.
      *
-     * @return mixed|null
+     * @return AbstractLocale
      */
-    public function text(string $section, string $key, $default = '')
+    public static function create(SectionedConfigInterface $config, string $locale = '', string $language = '')
     {
-        return $this->text->get($section, $key, $default);
+        $locl = $locale ? str_replace('_', '-', strtolower($locale)) : '';
+        $lang = $language ? str_replace('_', '-', strtolower($language)) : '';
+        $locale_final = $language_final = '';
+        $code_short_to_long = [];
+
+        $localeToClass = $config->get(static::CONFIG_SECTION, 'localeToClass');
+
+        if ($locl) {
+            if (isset($localeToClass[$locl])) {
+                $locale_final = $locl;
+            } elseif (strlen($locl) == 2) {
+                $code_short_to_long = $config->get(static::CONFIG_SECTION, 'codeShortToLong');
+                $locale_final = $code_short_to_long[$locl] ?? '';
+            }
+        }
+        if ($lang) {
+            if (in_array($lang, $config->get(static::CONFIG_SECTION, 'languages'))) {
+                $language_final = $lang;
+            } elseif (strlen($lang) == 2) {
+                if (!$code_short_to_long) {
+                    $code_short_to_long = $config->get(static::CONFIG_SECTION, 'codeShortToLong');
+                }
+                $language_final = $code_short_to_long[$lang] ?? '';
+            }
+        }
+
+        if (!$locale_final && !$language_final) {
+            $locale_final = $config->get(static::CONFIG_SECTION, 'localeDefault');
+            $language_final = $config->get(static::CONFIG_SECTION, 'languageDefault');
+        } elseif (!$locale_final) {
+            if ($lang) {
+                // Arg language may be supported as locale despite not supported as langugage.
+                $locale_final = $config->get(static::CONFIG_SECTION, 'languageToLocale')[$lang] ?? null;
+            }
+            if (!$locale_final) {
+                $locale_final = $config->get(static::CONFIG_SECTION, 'languageToLocale')[$language_final] ??
+                    $config->get(static::CONFIG_SECTION, 'localeDefault');
+            }
+        } elseif (!$language_final) {
+            if ($locl) {
+                // Arg locale may be supported as language despite not supported as locale.
+                $language_final = $config->get(static::CONFIG_SECTION, 'localeToLanguage')[$locl] ?? null;
+            }
+            if (!$language_final) {
+                $language_final = $config->get(static::CONFIG_SECTION, 'localeToLanguage')[$locale_final] ??
+                    $config->get(static::CONFIG_SECTION, 'languageDefault');
+            }
+        }
+        // LocaleEnUs.
+        $class_locale = $localeToClass[$locale_final];
+
+        /** @var AbstractLocale */
+        return new $class_locale($language_final);
     }
 }

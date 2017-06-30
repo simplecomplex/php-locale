@@ -11,6 +11,8 @@ namespace SimpleComplex\Locale;
 
 use SimpleComplex\Config\IniSectionedFlatConfig;
 
+// @todo: make CliLocaleText class like CliConfig.
+
 /**
  * ???
  *
@@ -20,21 +22,6 @@ use SimpleComplex\Config\IniSectionedFlatConfig;
  */
 class LocaleText extends IniSectionedFlatConfig
 {
-
-    /**
-     * No default paths.
-     */
-    const PATH_DEFAULTS = [];
-
-    /**
-     * Allows any paths; any names and number of.
-     *
-     * Relative path is relative to document root.
-     *
-     * @var string[]
-     */
-    protected $paths = [];
-
     /**
      * LocaleText constructor.
      *

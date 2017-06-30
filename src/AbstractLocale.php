@@ -9,19 +9,137 @@ declare(strict_types=1);
 
 namespace SimpleComplex\Locale;
 
-use SimpleComplex\Utils\Unicode;
+use SimpleComplex\Utils\Explorable;
 use SimpleComplex\Config\SectionedConfigInterface;
 
 /**
- * ???
+ * Abstract locale.
+ *
+ * @dependency-injection-container locale
  *
  * @property-read string $locale
  * @property-read string $language
+ * @property-read array $temporal
+ * @property-read array $numeric
+ * @property-read array $currency
  *
  * @package SimpleComplex\Locale
  */
-abstract class AbstractLocale
+abstract class AbstractLocale extends Explorable
 {
+    // Extending class MUST override these properties.--------------------------
+
+    /**
+     * Do override.
+     *
+     * @var string
+     */
+    protected $locale = 'xx-xx';
+
+    /**
+     * Do override.
+     *
+     * @var array
+     */
+    const TEMPORAL = [
+        'datePartSequence' => 'Ymd',
+        'dateShort' => 'Y-m-d',
+        'dateLong' => 'Y-m-d H:i',
+        'timeShort' => 'H:i',
+        'timeLong' => 'H:i:s',
+        'weekdayFirst' => 'monday',
+    ];
+
+    /**
+     * Do override.
+     *
+     * @var array
+     */
+    const NUMERIC = [
+        'decimalMark' => '.',
+        'thousandSeparator' => ' ',
+        'noFractionMark' => '/-',
+    ];
+
+    /**
+     * Do override.
+     *
+     * @var array[]
+     */
+    const CURRENCY = [
+        [
+            'title' => 'money',
+            'abbreviation' => 'XYZ',
+            'sign' => '¤',
+        ],
+    ];
+
+
+    // Explorable.--------------------------------------------------------------
+
+    /**
+     * @var array
+     */
+    protected $explorableIndex = [
+        'locale',
+        'language',
+        'temporal',
+        'numeric',
+        'currency',
+    ];
+
+    /**
+     * @param string $name
+     *
+     * @return mixed
+     *
+     * @throws \OutOfBoundsException
+     *      If no such instance property.
+     */
+    public function __get($name)
+    {
+        if (in_array($name, $this->explorableIndex, true)) {
+            switch ($name) {
+                case 'temporal':
+                    // Copy, to secure read-only.
+                    $v = static::TEMPORAL;
+                    return $v;
+                case 'numeric':
+                    // Copy, to secure read-only.
+                    $v = static::NUMERIC;
+                    return $v;
+                case 'currency':
+                    // Copy, to secure read-only.
+                    $v = static::CURRENCY;
+                    return $v;
+            }
+            return $this->{$name};
+        }
+        throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $name . '].');
+    }
+
+    /**
+     * @param string $name
+     * @param mixed|null $value
+     *
+     * @return void
+     *
+     * @throws \OutOfBoundsException
+     *      If no such instance property.
+     * @throws \RuntimeException
+     *      If that instance property is read-only.
+     */
+    public function __set($name, $value) /*: void*/
+    {
+        if (in_array($name, $this->explorableIndex, true)) {
+            throw new \RuntimeException(get_class($this) . ' instance property[' . $name . '] is read-only.');
+        }
+        throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $name . '].');
+    }
+
+
+    // Business.----------------------------------------------------------------
+
     /**
      * Config var default section.
      *
@@ -29,39 +147,15 @@ abstract class AbstractLocale
      */
     const CONFIG_SECTION = 'lib_simplecomplex_locale';
 
-    const TEMPORAL = [
-        'datePartSequence' => 'Ymd',
-    ];
-
-    const NUMERIC = [
-        'decimalMark' => '.',
-        'thousandSeparator' => ' ',
-        'noFractionMark' => '/-',
-    ];
-
-    const CURRENCY = [
-        'money' => '¤',
-    ];
-
-    const WEEKDAY_FIRST = 'sunday';
-
+    /**
+     * @var string
+     */
+    protected $language;
 
     /**
-     * Config vars, and their effective defaults:
-     *  - (arr) text_paths
-     *
-     * See also ../config-ini/locale.ini
-     *
-     * @see Locale::CONFIG_SECTION
-     *
      * @var SectionedConfigInterface
      */
     protected $config;
-
-    /**
-     * @var \SimpleComplex\Utils\Unicode
-     */
-    protected $unicode;
 
     /**
      * @var LocaleText
@@ -70,32 +164,85 @@ abstract class AbstractLocale
 
     /**
      * @param SectionedConfigInterface $config
-     * @param string $locale
      * @param string $language
+     *      Format: en-us.
+     *      Empty: uses config localeToLanguage[locale].
      */
-    public function __construct(SectionedConfigInterface $config, string $locale = 'en-us', string $language = '')
+    public function __construct(SectionedConfigInterface $config, string $language = '')
     {
         $this->config = $config;
-
-        $this->unicode = Unicode::getInstance();
-
-        $this->locale = str_replace('_', '-', strtolower($locale));
-        $this->language = $language ? str_replace('_', '-', strtolower($language)) : $this->locale;
-
-
-
-
-        $this->locale = $this->language = strtolower($locale);
-
-        $this->text = new LocaleText($locale, $config->get(static::CONFIG_SECTION, 'text_paths', []));
+        if (!$language) {
+            $language = $config->get(static::CONFIG_SECTION, 'localeToLanguage')[$this->locale];
+        }
+        $this->language = $language;
+        $this->text = new LocaleText($language, $config->get(static::CONFIG_SECTION, 'text_paths', []));
     }
 
     /**
+     * Get localized text.
+     *
      * @param string $section
      * @param string $key
      * @param string|array $default
+     *      Beware that an item may be a list.
      *
      * @return mixed|null
+     *      null: if using arg default null.
      */
-    abstract public function text(string $section, string $key, $default = '');
+    public function text(string $section, string $key, $default = '')
+    {
+        return $this->text->get($section, $key, $default);
+    }
+
+    /**
+     * @param string $key
+     *      Empty: return all temporal settings.
+     *
+     * @return mixed|array
+     *
+     * @throws \InvalidArgumentException
+     *      Unsupported arg key.
+     */
+    public function temporal(string $key = '')
+    {
+        if (!$key) {
+            return static::TEMPORAL;
+        }
+        if (isset(static::TEMPORAL[$key])) {
+            return static::TEMPORAL[$key];
+        }
+        throw new \InvalidArgumentException('Arg key not supported, key[' . $key . '].');
+    }
+
+    /**
+     * @param string $key
+     *      Empty: return all numeric settings.
+     *
+     * @return mixed|array
+     *
+     * @throws \InvalidArgumentException
+     *      Unsupported arg key.
+     */
+    public function numeric(string $key = '')
+    {
+        if (!$key) {
+            return static::NUMERIC;
+        }
+        if (isset(static::NUMERIC[$key])) {
+            return static::NUMERIC[$key];
+        }
+        throw new \InvalidArgumentException('Arg key not supported, key[' . $key . '].');
+    }
+
+    /**
+     * @param bool $default
+     *      False: return all currencies.
+     *      True: return first currency.
+     *
+     * @return string|array
+     */
+    public function currency(bool $default = false)
+    {
+        return !$default ? static::CURRENCY : static::CURRENCY[0];
+    }
 }
