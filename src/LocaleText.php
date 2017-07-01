@@ -12,9 +12,18 @@ namespace SimpleComplex\Locale;
 use SimpleComplex\Config\IniSectionedFlatConfig;
 
 /**
- * ???
+ * Text localisation based on .ini files.
  *
- * @todo: say something
+ * Contrary to gettext (.po files) there's no translation involved.
+ * Here, it's all about 'context' - implemented as 'section'+'key'.
+ *
+ * gettext is great, but translation sources tend to be a problem;
+ * - oops, we've changed a source text (typically in English)
+ * and now all it's translations are de-referenced/orphans...
+ * In the end, text item identifiers (context, section+key) is the only thing
+ * that works reliably.
+ *
+ * @see \SimpleComplex\Config\SectionedConfigInterface
  *
  * @package SimpleComplex\Locale
  */
