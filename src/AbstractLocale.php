@@ -15,6 +15,14 @@ use SimpleComplex\Config\SectionedConfigInterface;
 /**
  * Abstract locale.
  *
+ * Locale and language codes
+ * -------------------------
+ * This class, and children, uses the same format for locale and language codes.
+ * That is: lowercase hyphen-separated IETF; 'da-dk'.
+ * For more versatile input format support, use the Locale factory class.
+ *
+ * @see Locale
+ *
  * @dependency-injection-container locale
  *
  * @property-read string $locale
@@ -165,7 +173,7 @@ abstract class AbstractLocale extends Explorable
     /**
      * @param SectionedConfigInterface $config
      * @param string $language
-     *      Format: en-us.
+     *      Format: 'da-dk'.
      *      Empty: uses config localeToLanguage[locale].
      */
     public function __construct(SectionedConfigInterface $config, string $language = '')

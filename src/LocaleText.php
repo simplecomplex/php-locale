@@ -11,12 +11,10 @@ namespace SimpleComplex\Locale;
 
 use SimpleComplex\Config\IniSectionedFlatConfig;
 
-// @todo: make CliLocaleText class like CliConfig.
-
 /**
  * ???
  *
- * @internal
+ * @todo: say something
  *
  * @package SimpleComplex\Locale
  */
@@ -49,7 +47,7 @@ class LocaleText extends IniSectionedFlatConfig
      * LocaleText constructor.
      *
      * @param string $language
-     *      Lisp-cased; 'en-gb'.
+     *      Lisp-cased; 'da-dk'.
      * @param string[] $paths
      */
     public function __construct(string $language, array $paths)

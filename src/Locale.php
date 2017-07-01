@@ -12,10 +12,22 @@ namespace SimpleComplex\Locale;
 use SimpleComplex\Config\SectionedConfigInterface;
 
 /**
- * Helper which maps locale and/or language to supported/default.
+ * Factory which maps locale and/or language to supported/default,
+ * and constructs an instance of an AbstractLocale implementation.
  *
  * If locale is known/asserted and known to be supported then it is far more
  * efficient to instantiate the appropriate Locale[locale code] class directly.
+ *
+ * Locale and language codes
+ * -------------------------
+ * Locale accepts and uses the same formats for locale and language code.
+ * Formats supported:
+ * - ISO 639-1: 'da'
+ * - IETF: 'da_DK', 'da_dk', 'da-DK', 'da-dk'.
+ * Internal format:
+ * - 'da-dk'
+ *
+ * @see AbstractLocale
  *
  * @package SimpleComplex\Locale
  */
@@ -29,9 +41,9 @@ class Locale
     /**
      * @param SectionedConfigInterface $config
      * @param string $locale
-     *      Formats supported: en, en_US, en_us, en-US, en-us.
+     *      Formats supported: da, da_DK, da_dk, da-DK, da-dk.
      * @param string $language
-     *      Formats supported: en, en_US, en_us, en-US, en-us.
+     *      Formats supported: da, da_DK, da_dk, da-DK, da-dk.
      *
      * @return AbstractLocale
      */
