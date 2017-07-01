@@ -78,7 +78,7 @@ class CliLocaleText implements CliCommandInterface
                 static::COMMAND_PROVIDER_ALIAS . '-get',
                 'Get a locale-text item.',
                 [
-                    'language' => 'Locale, like da-dk.',
+                    'language' => 'Like da-dk.',
                     'section' => 'Text section.',
                     'key' => 'Text item key.',
                 ],
@@ -96,7 +96,7 @@ class CliLocaleText implements CliCommandInterface
                 static::COMMAND_PROVIDER_ALIAS . '-set',
                 'Set a locale-text item.',
                 [
-                    'language' => 'Locale, like da-dk.',
+                    'language' => 'Like da-dk.',
                     'section' => 'Text section.',
                     'key' => 'Text item key.',
                     'value' => 'Value to set, please enclose in single quotes.',
@@ -109,7 +109,7 @@ class CliLocaleText implements CliCommandInterface
                 static::COMMAND_PROVIDER_ALIAS . '-delete',
                 'Delete a locale-text item.',
                 [
-                    'language' => 'Locale, like da-dk.',
+                    'language' => 'Like da-dk.',
                     'section' => 'Text section.',
                     'key' => 'Text item key.',
                 ],
@@ -125,10 +125,34 @@ class CliLocaleText implements CliCommandInterface
                 . "\n" . 'NB: All items that have been set, overwritten or deleted since last refresh'
                 . ' will be gone or restored to .ini-files\' original state.',
                 [
-                    'language' => 'Locale, like da-dk.',
+                    'language' => 'Like da-dk.',
                 ],
                 [],
                 []
+            ),
+            new CliCommand(
+                $this,
+                static::COMMAND_PROVIDER_ALIAS . '-export',
+                'Export all texts from all .locale-text.[language].ini files in the paths defined in'
+                . ' config global '
+                . $this->environment->format('lib_simplecomplex_locale localeTextPaths', 'italics')
+                . '.'
+                . "\n" . 'Exporting from cache isn\'t possible because cache has no index;'
+                . ' doesn\'t know which sections and keys exist, unless asked specifically.',
+                [
+                    'language' => 'Like da-dk.',
+                    'target-file' => 'Path and filename; the path must exist already.'
+                        . "\n" . 'Relative is relative to document root.',
+                ],
+                [
+                    'format' => 'JSON; default, and the only format supported.',
+                    'unescaped' => 'Don\'t escape slash, tag, quotes, ampersand, unicode chars.',
+                    'pretty' => 'Pretty-print.',
+                ],
+                [
+                    'u' => 'unescaped',
+                    'p' => 'pretty',
+                ]
             )
         );
     }
@@ -266,7 +290,9 @@ class CliLocaleText implements CliCommandInterface
                 exit;
             }
         }
-        $this->environment->echoMessage(json_encode($value, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        $this->environment->echoMessage(
+            json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
+        );
         exit;
     }
 
@@ -407,8 +433,8 @@ class CliLocaleText implements CliCommandInterface
         // Validate input. ---------------------------------------------
         $language = '';
         if (empty($this->command->arguments['language'])) {
-            $this->command->inputErrors[] = !isset($this->command->arguments['language']) ? 'Missing \'language\' argument.' :
-                'Empty \'language\' argument.';
+            $this->command->inputErrors[] = !isset($this->command->arguments['language']) ?
+                'Missing \'language\' argument.' : 'Empty \'language\' argument.';
         } else {
             $language = $this->command->arguments['language'];
             if (!LocaleCode::validate($language)) {
@@ -501,7 +527,8 @@ class CliLocaleText implements CliCommandInterface
         // Do it.
         if (!$locale_text->delete($section, $key)) {
             $this->environment->echoMessage(
-                'Failed to delete locale-text item language[' . $language . '] section[' . $section . '] key[' . $key . '].',
+                'Failed to delete locale-text item language['
+                . $language . '] section[' . $section . '] key[' . $key . '].',
                 'error'
             );
         } else {
@@ -528,8 +555,8 @@ class CliLocaleText implements CliCommandInterface
         // Validate input. ---------------------------------------------
         $language = '';
         if (empty($this->command->arguments['language'])) {
-            $this->command->inputErrors[] = !isset($this->command->arguments['language']) ? 'Missing \'language\' argument.' :
-                'Empty \'language\' argument.';
+            $this->command->inputErrors[] = !isset($this->command->arguments['language']) ?
+                'Missing \'language\' argument.' : 'Empty \'language\' argument.';
         } else {
             $language = $this->command->arguments['language'];
             if (!LocaleCode::validate($language)) {
@@ -606,6 +633,124 @@ class CliLocaleText implements CliCommandInterface
         exit;
     }
 
+    /**
+     * Ignores pre-confirmation --yes/-y option.
+     *
+     * @return void
+     *      Exits.
+     */
+    protected function cmdExport() /*: void*/
+    {
+        /**
+         * @see simplecomplex_locale_text_cli()
+         */
+        $container = Dependency::container();
+        // Validate input. ---------------------------------------------
+        $language = '';
+        if (empty($this->command->arguments['language'])) {
+            $this->command->inputErrors[] = !isset($this->command->arguments['language']) ?
+                'Missing \'language\' argument.' : 'Empty \'language\' argument.';
+        } else {
+            $language = $this->command->arguments['language'];
+            if (!LocaleCode::validate($language)) {
+                $this->command->inputErrors[] = 'Invalid \'language\' argument.';
+            }
+        }
+        $target_file = '';
+        if (empty($this->command->arguments['target-file'])) {
+            $this->command->inputErrors[] = !isset($this->command->arguments['target-file']) ?
+                'Missing \'target-file\' argument.' : 'Empty \'target-file\' argument.';
+        } else {
+            $target_file = $this->command->arguments['target-file'];
+        }
+
+        $format = !empty($this->command->options['format']) ? $this->command->options['format'] : 'JSON';
+        $unescaped = !empty($this->command->options['unescaped']);
+        $pretty = !empty($this->command->options['pretty']);
+
+        // Pre-confirmation --yes/-y ignored for this command.
+        if ($this->command->preConfirmed) {
+            $this->command->inputErrors[] = 'Pre-confirmation \'yes\'/-y option not supported for this command.';
+        }
+        if ($this->command->inputErrors) {
+            foreach ($this->command->inputErrors as $msg) {
+                $this->environment->echoMessage(
+                    $this->environment->format($msg, 'hangingIndent'),
+                    'notice'
+                );
+            }
+            // This command's help text.
+            $this->environment->echoMessage("\n" . $this->command);
+            exit;
+        }
+        // Check if the command is doable.------------------------------
+        if ($container->has('config')) {
+            /** @var \SimpleComplex\Config\IniSectionedConfig $config */
+            $config = $container->get('config');
+        } else {
+            $config_class = static::CLASS_CONFIG;
+            /** @var \SimpleComplex\Config\IniSectionedConfig $config */
+            $config = new $config_class('global');
+        }
+        $locale_text_paths = $config->get('lib_simplecomplex_locale', 'localeTextPaths');
+        if (!$locale_text_paths || !is_array($locale_text_paths)) {
+            $this->environment->echoMessage(
+                'Global config misses item section[lib_simplecomplex_locale] key[localeTextPaths].',
+                'warning'
+            );
+            exit;
+        }
+        if (!is_array($locale_text_paths)) {
+            $this->environment->echoMessage(
+                'Global config item section[lib_simplecomplex_locale] key[localeTextPaths] is not array.',
+                'error'
+            );
+            exit;
+        }
+        $locale_text_class = static::CLASS_LOCALE_TEXT;
+        /** @var LocaleText $locale_text */
+        $locale_text = new $locale_text_class($language, $locale_text_paths);
+        // Display command and the arg values used.---------------------
+        $this->environment->echoMessage(
+            $this->environment->format(
+                $this->environment->format($this->command->name, 'emphasize')
+                . "\n" . 'language: ' . $language
+                . "\n" . 'target-file: ' . $target_file
+                . (!$this->command->options ? '' : ("\n--" . join(' --', array_keys($this->command->options)))),
+                'hangingIndent'
+            )
+        );
+        // Request confirmation, ignore --yes/-y pre-confirmation option.
+        if (
+            !$this->environment->confirm(
+                'Export that locale-text language - will overwrite the target file (if exists)?'
+                . "\n" . 'Type \'yes\' to continue:',
+                ['yes'],
+                '',
+                'Aborted exporting locale-text language.'
+            )
+        ) {
+            exit;
+        }
+        // Do it.
+        if (!$locale_text->export(
+            $target_file,
+            [
+                'format' => strtoupper($format),
+                'unescaped' => $unescaped,
+                'pretty' => $pretty,
+            ]
+        )) {
+            $this->environment->echoMessage('Failed to export locale-text language[' . $language . '].', 'error');
+        } else {
+            $this->environment->echoMessage(
+                'Exported locale-text language[' . $language . '] to target file[' . $target_file . '].',
+                'success'
+            );
+        }
+        exit;
+    }
+
 
     // CliCommandInterface.-----------------------------------------------------
 
@@ -644,6 +789,9 @@ class CliLocaleText implements CliCommandInterface
                 exit;
             case static::COMMAND_PROVIDER_ALIAS . '-refresh':
                 $this->cmdRefresh();
+                exit;
+            case static::COMMAND_PROVIDER_ALIAS . '-export':
+                $this->cmdExport();
                 exit;
             default:
                 throw new \LogicException(
