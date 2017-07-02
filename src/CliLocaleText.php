@@ -133,23 +133,23 @@ class CliLocaleText implements CliCommandInterface
             new CliCommand(
                 $this,
                 static::COMMAND_PROVIDER_ALIAS . '-export',
-                'Export all texts from all .locale-text.[language].ini files in the paths defined in'
-                . ' config global '
-                . $this->environment->format('lib_simplecomplex_locale localeTextPaths', 'italics')
-                . '.'
-                . "\n" . 'Exporting from cache isn\'t possible because cache has no index;'
-                . ' doesn\'t know which sections and keys exist, unless asked specifically.',
+                'Export all texts from cache or from sources.'
+                . "\n" . 'Sources are all .locale-text.[language].ini files in the paths defined in'
+                . "\n" . 'config '
+                . $this->environment->format('global lib_simplecomplex_locale localeTextPaths', 'italics') . '.',
                 [
                     'language' => 'Like da-dk.',
                     'target-file' => 'Path and filename; the path must exist already.'
                         . "\n" . 'Relative is relative to document root.',
                 ],
                 [
+                    'from-sources' => 'From source paths\' ini files; not cache.',
                     'format' => 'JSON; default, and the only format supported.',
                     'unescaped' => 'Don\'t escape slash, tag, quotes, ampersand, unicode chars.',
                     'pretty' => 'Pretty-print.',
                 ],
                 [
+                    's' => 'from-sources',
                     'u' => 'unescaped',
                     'p' => 'pretty',
                 ]
@@ -664,6 +664,7 @@ class CliLocaleText implements CliCommandInterface
             $target_file = $this->command->arguments['target-file'];
         }
 
+        $from_sources = !empty($this->command->options['from-sources']);
         $format = !empty($this->command->options['format']) ? $this->command->options['format'] : 'JSON';
         $unescaped = !empty($this->command->options['unescaped']);
         $pretty = !empty($this->command->options['pretty']);
@@ -723,7 +724,8 @@ class CliLocaleText implements CliCommandInterface
         // Request confirmation, ignore --yes/-y pre-confirmation option.
         if (
             !$this->environment->confirm(
-                'Export that locale-text language - will overwrite the target file (if exists)?'
+                'Export that locale-text language from ' . (!$from_sources ? 'cache' : 'sources')
+                . ' - will overwrite the target file (if exists)?'
                 . "\n" . 'Type \'yes\' to continue:',
                 ['yes'],
                 '',
@@ -736,6 +738,7 @@ class CliLocaleText implements CliCommandInterface
         if (!$locale_text->export(
             $target_file,
             [
+                'fromSources' => $from_sources,
                 'format' => strtoupper($format),
                 'unescaped' => $unescaped,
                 'pretty' => $pretty,
@@ -744,7 +747,8 @@ class CliLocaleText implements CliCommandInterface
             $this->environment->echoMessage('Failed to export locale-text language[' . $language . '].', 'error');
         } else {
             $this->environment->echoMessage(
-                'Exported locale-text language[' . $language . '] to target file[' . $target_file . '].',
+                'Exported locale-text language[' . $language . '] from ' . (!$from_sources ? 'cache' : 'sources')
+                . ' to target file[' . $target_file . '].',
                 'success'
             );
         }
