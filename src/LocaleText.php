@@ -39,6 +39,13 @@ class LocaleText extends IniSectionedFlatConfig
     protected $escapeSourceKeys = true;
 
     /**
+     * All values are strings; don't type null|true|false|N|N.N.
+     *
+     * @var bool
+     */
+    protected $parseTyped = false;
+
+    /**
      * Overridden with empty to make constructor argument paths rule.
      *
      * @var string[]

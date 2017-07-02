@@ -1,3 +1,9 @@
+SimpleComplex/Locale 1.x, 2017-07-02
+------------------------------------
+- Don't parse type locale-text text .inis.
+- Include locale-text settings into main locale settings .ini file.
+- Better help in .ini files.
+
 SimpleComplex/Locale 1.x, 2017-07-01
 ------------------------------------
 - CLI interface for locale text.
