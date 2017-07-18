@@ -1,3 +1,8 @@
+SimpleComplex/Locale 1.x, 2017-07-18
+------------------------------------
+- Locale text() must always return string.
+  Locale text() use string parameter identifier ('section:key:sub').
+
 SimpleComplex/Locale 1.x, 2017-07-12
 ------------------------------------
 - Release 0.9.

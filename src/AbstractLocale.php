@@ -10,7 +10,10 @@ declare(strict_types=1);
 namespace SimpleComplex\Locale;
 
 use SimpleComplex\Utils\Explorable;
+use SimpleComplex\Utils\Dependency;
 use SimpleComplex\Config\SectionedConfigInterface;
+use SimpleComplex\Locale\Exception\TextIdentifierException;
+use SimpleComplex\Locale\Exception\TextNotFoundException;
 
 /**
  * Abstract locale.
@@ -81,6 +84,26 @@ abstract class AbstractLocale extends Explorable
             'sign' => '¤',
         ],
     ];
+
+    // Extending class may override these properties.---------------------------
+
+    /**
+     * Delimiter between text identifier parts
+     *
+     * Used like 'section:key' or 'section:key:sub'.
+     *
+     * @var string
+     */
+    const TEXT_ID_DELIMITER = ':';
+
+    /**
+     * Text to display (return) when text not found.
+     *
+     * @see AbstractLocale::text()
+     *
+     * @var string
+     */
+    const TEXT_NOT_FOUND_TEXT = 'Locale text not found: %identifier';
 
 
     // Explorable.--------------------------------------------------------------
@@ -189,17 +212,97 @@ abstract class AbstractLocale extends Explorable
     /**
      * Get localized text.
      *
-     * @param string $section
-     * @param string $key
-     * @param string|array $default
-     *      Beware that an item may be a list.
+     * @param string $identifier
+     *      'section:key' or 'section:key:sub'.
+     * @param array $replacers
+     *      List of placeholders and values.
+     *      Placeholder 'name' will be used on text content '... %name ...'.
      *
-     * @return mixed|null
-     *      null: if using arg default null.
+     * @return string
+     *
+     * @throws \InvalidArgumentException
+     *      Empty arg identifier, or too many/few section-key-bucket delimiters.
+     * @throws TextNotFoundException
+     *      Unless suppress by falsy setting
+     *      lib_simplecomplex_locale.localeTextErrNotFound.
+     * @throws TextIdentifierException
+     *      If arg identifier only points at section:key, but that value is
+     *      array; indicating missing trailing :sub in identifier.
+     *      Or the opposite: arg identifier points at section:key:sub, but
+     *      section:key value isn't array.
      */
-    public function text(string $section, string $key, $default = '')
+    public function text(string $identifier, array $replacers = [])
     {
-        return $this->text->get($section, $key, $default);
+        if (!$identifier) {
+            throw new \InvalidArgumentException('Arg identifier cannot be empty.');
+        }
+        $key_path = explode(static::TEXT_ID_DELIMITER, $identifier);
+        $n_keys = count($key_path);
+        if ($n_keys < 2) {
+            throw new \InvalidArgumentException(
+                'Arg identifier must contain at least one section-key-sub delimiter[' . static::TEXT_ID_DELIMITER . '].'
+            );
+        } elseif ($n_keys > 3) {
+            throw new \InvalidArgumentException(
+                'Arg identifier cannot more than two section-key-bucket delimiters[' . static::TEXT_ID_DELIMITER . '].'
+            );
+        }
+
+        $text = $this->text->get($key_path[0], $key_path[1], false);
+        if ($text === false) {
+            if ($this->config->get(static::CONFIG_SECTION, 'localeTextErrNotFound', true)) {
+                throw new TextNotFoundException(
+                    'Locale text not found, identifier[' . $identifier . '].'
+                );
+            }
+            $container = Dependency::container();
+            if ($container->has('logger')) {
+                $container->get('logger')->warning('Locale text not found, identifier[{identifier}].', [
+                    'identifier' => $identifier,
+                ]);
+            }
+            return str_replace('%identifier', $identifier, static::TEXT_NOT_FOUND_TEXT);
+        }
+        $is_array = is_array($text);
+        if ($n_keys == 2) {
+            // Must be string.
+            if ($is_array) {
+                throw new TextIdentifierException(
+                    'Locale text identifier misses sub item part, identifier[' . $identifier . '] is a list.'
+                );
+            }
+        } else {
+            // Must be array.
+            if (!$is_array) {
+                throw new TextIdentifierException(
+                    'Locale text identifier has surplus sub item part, section+key['
+                    . $key_path[0] . ':' . $key_path[1] . '] is string not list.'
+                );
+            }
+            if (!isset($text[$key_path[2]])) {
+                if ($this->config->get(static::CONFIG_SECTION, 'localeTextErrNotFound', true)) {
+                    throw new TextNotFoundException(
+                        'Locale text not found, identifier[' . $identifier . '].'
+                    );
+                }
+                $container = Dependency::container();
+                if ($container->has('logger')) {
+                    $container->get('logger')->warning('Locale text not found, identifier[{identifier}].', [
+                        'identifier' => $identifier,
+                    ]);
+                }
+                return str_replace('%identifier', $identifier, static::TEXT_NOT_FOUND_TEXT);
+            }
+            $text = $text[$key_path[2]];
+        }
+
+        if ($replacers) {
+            foreach ($replacers as $placeholder => $v) {
+                $text = str_replace('%' . $placeholder, $v, $text);
+            }
+        }
+
+        return $text;
     }
 
     /**
