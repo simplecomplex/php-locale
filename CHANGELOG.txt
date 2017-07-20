@@ -1,3 +1,7 @@
+SimpleComplex/Locale 1.x, 2017-07-20
+------------------------------------
+- Cli script find vendor dir fix.
+
 SimpleComplex/Locale 1.x, 2017-07-18
 ------------------------------------
 - Locale text() must always return string.
