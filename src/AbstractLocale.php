@@ -105,6 +105,15 @@ abstract class AbstractLocale extends Explorable
      */
     const TEXT_NOT_FOUND_TEXT = 'Locale text not found: %identifier';
 
+    /**
+     * Class name of \SimpleComplex\Locale\LocaleText or extending class.
+     *
+     * @see AbstractLocale::__construct()
+     *
+     * @var string
+     */
+    const CLASS_LOCALE_TEXT = LocaleText::class;
+
 
     // Explorable.--------------------------------------------------------------
 
@@ -206,7 +215,8 @@ abstract class AbstractLocale extends Explorable
             $language = $config->get(static::CONFIG_SECTION, 'localeToLanguage')[$this->locale];
         }
         $this->language = $language;
-        $this->text = new LocaleText($language, $config->get(static::CONFIG_SECTION, 'localeTextPaths', []));
+        $class_locale_text = static::CLASS_LOCALE_TEXT;
+        $this->text = new $class_locale_text($language, $config->get(static::CONFIG_SECTION, 'localeTextPaths', []));
     }
 
     /**

@@ -103,4 +103,13 @@ class Locale
         /** @var AbstractLocale */
         return new $class_locale($config, $language_final);
     }
+
+    /**
+     * Not to be instantiated; at least not publicly.
+     *
+     * @see Locale::create()
+     */
+    protected function __construct()
+    {
+    }
 }
