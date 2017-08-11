@@ -308,7 +308,15 @@ abstract class AbstractLocale extends Explorable
 
         if ($replacers) {
             foreach ($replacers as $placeholder => $v) {
-                $text = str_replace('%' . $placeholder, $v, $text);
+                $plchldr = '' . $placeholder;
+                switch ($plchldr) {
+                    case '':
+                    case '%':
+                        break;
+                    default:
+                        // Allow that placeholder key is % prefixed.
+                        $text = str_replace(($plchldr{0} == '%' ? '' : '%') . $plchldr, $v, $text);
+                }
             }
         }
 
