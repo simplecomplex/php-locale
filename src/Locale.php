@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace SimpleComplex\Locale;
 
+use SimpleComplex\Utils\Exception\ConfigurationException;
 use SimpleComplex\Config\SectionedConfigInterface;
 
 /**
@@ -46,6 +47,9 @@ class Locale
      *      Formats supported: da, da_DK, da_dk, da-DK, da-dk.
      *
      * @return AbstractLocale
+     *
+     * @throws ConfigurationException
+     *      If the ini config localeToClass[locale] class doesn't exist.
      */
     public static function create(SectionedConfigInterface $config, string $locale = '', string $language = '')
     {
@@ -97,9 +101,15 @@ class Locale
                     $config->get(static::CONFIG_SECTION, 'languageDefault');
             }
         }
+
         // LocaleEnUs.
         $class_locale = $localeToClass[$locale_final];
-
+        if (!class_exists($class_locale)) {
+            throw new ConfigurationException(
+                'Locale config var lib_simplecomplex_locale localeToClass[' . $locale_final . '] value['
+                . $class_locale . '] doesn\'t exist.'
+            );
+        }
         /** @var AbstractLocale */
         return new $class_locale($config, $language_final);
     }

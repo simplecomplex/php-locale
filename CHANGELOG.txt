@@ -1,6 +1,8 @@
 SimpleComplex/Locale 1.x, 2017-08-11
 ------------------------------------
 - Allow that text() placeholder key is % prefixed.
+- Err if locale class doesn't exist; a.k.a. configuration error,
+  probably wrongly delimited namespace in config ini localeToClass[some-locale].
 
 SimpleComplex/Locale 1.x, 2017-07-20
 ------------------------------------
