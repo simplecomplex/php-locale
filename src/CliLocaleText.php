@@ -210,7 +210,7 @@ class CliLocaleText implements CliCommandInterface
         }
 
         $print = !empty($this->command->options['print']);
-        $inspect = !empty($this->command->options['inspect']);
+        $use_inspect = !empty($this->command->options['inspect']);
 
         if ($this->command->inputErrors) {
             foreach ($this->command->inputErrors as $msg) {
@@ -224,7 +224,7 @@ class CliLocaleText implements CliCommandInterface
             exit;
         }
         // Display command and the arg values used.---------------------
-        if ($print || $inspect) {
+        if ($print || $use_inspect) {
             $this->environment->echoMessage(
                 $this->environment->format(
                     $this->environment->format($this->command->name, 'emphasize')
@@ -273,20 +273,20 @@ class CliLocaleText implements CliCommandInterface
             exit;
         }
         $value = $locale_text->get($section, $key);
-        if (!$print && !$inspect) {
+        if (!$print && !$use_inspect) {
             return $value;
         }
         $this->environment->echoMessage('');
-        if ($inspect) {
-            $inspector = null;
-            if ($container->has('inspector')) {
-                $inspector = $container->get('inspector');
+        if ($use_inspect) {
+            $inspect = null;
+            if ($container->has('inspect')) {
+                $inspect = $container->get('inspect');
             } elseif (class_exists(static::CLASS_INSPECT)) {
                 $class_inspect = static::CLASS_INSPECT;
-                $inspector = new $class_inspect($container->has('config') ? $container->get('config') : null);
+                $inspect = new $class_inspect($container->has('config') ? $container->get('config') : null);
             }
-            if ($inspector) {
-                $this->environment->echoMessage($inspector->inspect($value)->toString(true));
+            if ($inspect) {
+                $this->environment->echoMessage($inspect->inspect($value)->toString(true));
                 exit;
             }
         }
