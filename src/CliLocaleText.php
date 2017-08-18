@@ -541,7 +541,8 @@ class CliLocaleText implements CliCommandInterface
     }
 
     /**
-     * Ignores pre-confirmation --yes/-y option.
+     * Ignores pre-confirmation --yes/-y option,
+     * unless .risky_command_skip_confirm file placed in document root.
      *
      * @return void
      *      Exits.
@@ -564,8 +565,9 @@ class CliLocaleText implements CliCommandInterface
             }
         }
         // Pre-confirmation --yes/-y ignored for this command.
-        if ($this->command->preConfirmed) {
-            $this->command->inputErrors[] = 'Pre-confirmation \'yes\'/-y option not supported for this command.';
+        if ($this->environment->riskyCommandRequireConfirm && $this->command->preConfirmed) {
+            $this->command->inputErrors[] = 'Pre-confirmation \'yes\'/-y option not supported for this command,'
+                . "\n" . 'unless .risky_command_skip_confirm file placed in document root.';
         }
         if ($this->command->inputErrors) {
             foreach ($this->command->inputErrors as $msg) {
@@ -606,22 +608,32 @@ class CliLocaleText implements CliCommandInterface
         /** @var LocaleText $locale_text */
         $locale_text = new $locale_text_class($language, $locale_text_paths);
         // Display command and the arg values used.---------------------
-        $this->environment->echoMessage(
-            $this->environment->format(
-                $this->environment->format($this->command->name, 'emphasize')
-                . "\n" . 'language: ' . $language,
-                'hangingIndent'
-            )
-        );
-        // Request confirmation, ignore --yes/-y pre-confirmation option.
-        if (
-            !$this->environment->confirm(
+        if ($this->environment->riskyCommandRequireConfirm || !$this->command->preConfirmed) {
+            $this->environment->echoMessage(
+                $this->environment->format(
+                    $this->environment->format($this->command->name, 'emphasize')
+                    . "\n" . 'language: ' . $language,
+                    'hangingIndent'
+                )
+            );
+        }
+        // Request confirmation, ignore --yes/-y pre-confirmation option;
+        // unless .risky_command_skip_confirm file placed in document root.
+        if ($this->environment->riskyCommandRequireConfirm) {
+            if (!$this->environment->confirm(
                 'Refresh that locale-text language? Type \'yes\' to continue:',
                 ['yes'],
                 '',
                 'Aborted refreshing locale-text language.'
-            )
-        ) {
+            )) {
+                exit;
+            }
+        } elseif (!$this->command->preConfirmed && !$this->environment->confirm(
+                'Refresh that locale-text language? Type \'yes\' or \'y\' to continue:',
+                ['yes', 'y'],
+                '',
+                'Aborted refreshing locale-text language.'
+            )) {
             exit;
         }
         // Do it.
@@ -634,7 +646,8 @@ class CliLocaleText implements CliCommandInterface
     }
 
     /**
-     * Ignores pre-confirmation --yes/-y option.
+     * Ignores pre-confirmation --yes/-y option,
+     * unless .risky_command_skip_confirm file placed in document root.
      *
      * @return void
      *      Exits.
@@ -670,8 +683,9 @@ class CliLocaleText implements CliCommandInterface
         $pretty = !empty($this->command->options['pretty']);
 
         // Pre-confirmation --yes/-y ignored for this command.
-        if ($this->command->preConfirmed) {
-            $this->command->inputErrors[] = 'Pre-confirmation \'yes\'/-y option not supported for this command.';
+        if ($this->environment->riskyCommandRequireConfirm && $this->command->preConfirmed) {
+            $this->command->inputErrors[] = 'Pre-confirmation \'yes\'/-y option not supported for this command,'
+                . "\n" . 'unless .risky_command_skip_confirm file placed in document root.';
         }
         if ($this->command->inputErrors) {
             foreach ($this->command->inputErrors as $msg) {
@@ -712,26 +726,38 @@ class CliLocaleText implements CliCommandInterface
         /** @var LocaleText $locale_text */
         $locale_text = new $locale_text_class($language, $locale_text_paths);
         // Display command and the arg values used.---------------------
-        $this->environment->echoMessage(
-            $this->environment->format(
-                $this->environment->format($this->command->name, 'emphasize')
-                . "\n" . 'language: ' . $language
-                . "\n" . 'target-file: ' . $target_file
-                . (!$this->command->options ? '' : ("\n--" . join(' --', array_keys($this->command->options)))),
-                'hangingIndent'
-            )
-        );
-        // Request confirmation, ignore --yes/-y pre-confirmation option.
-        if (
-            !$this->environment->confirm(
+        if ($this->environment->riskyCommandRequireConfirm || !$this->command->preConfirmed) {
+            $this->environment->echoMessage(
+                $this->environment->format(
+                    $this->environment->format($this->command->name, 'emphasize')
+                    . "\n" . 'language: ' . $language
+                    . "\n" . 'target-file: ' . $target_file
+                    . (!$this->command->options ? '' : ("\n--" . join(' --', array_keys($this->command->options)))),
+                    'hangingIndent'
+                )
+            );
+        }
+        // Request confirmation, ignore --yes/-y pre-confirmation option;
+        // unless .risky_command_skip_confirm file placed in document root.
+        if ($this->environment->riskyCommandRequireConfirm) {
+            if (!$this->environment->confirm(
                 'Export that locale-text language from ' . (!$from_sources ? 'cache' : 'sources')
                 . ' - will overwrite the target file (if exists)?'
                 . "\n" . 'Type \'yes\' to continue:',
                 ['yes'],
                 '',
                 'Aborted exporting locale-text language.'
-            )
-        ) {
+            )) {
+                exit;
+            }
+        } elseif (!$this->command->preConfirmed && !$this->environment->confirm(
+                'Export that locale-text language from ' . (!$from_sources ? 'cache' : 'sources')
+                . ' - will overwrite the target file (if exists)?'
+                . "\n" . 'Type \'yes\' or \'y\' to continue:',
+                ['yes', 'y'],
+                '',
+                'Aborted exporting locale-text language.'
+            )) {
             exit;
         }
         // Do it.
