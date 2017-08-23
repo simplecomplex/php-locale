@@ -60,6 +60,11 @@ class LocaleText extends IniSectionedFlatConfig
     protected $paths = [];
 
     /**
+     * @var array
+     */
+    protected $fileExtensions;
+
+    /**
      * LocaleText constructor.
      *
      * @param string $language
