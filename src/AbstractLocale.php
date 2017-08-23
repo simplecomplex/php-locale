@@ -216,7 +216,11 @@ abstract class AbstractLocale extends Explorable
         }
         $this->language = $language;
         $class_locale_text = static::CLASS_LOCALE_TEXT;
-        $this->text = new $class_locale_text($language, $config->get(static::CONFIG_SECTION, 'localeTextPaths', []));
+        $paths = $config->get(static::CONFIG_SECTION, 'localeTextPaths', []);
+        // Sort paths to allow applications to override common translations
+        // by using alphanerically 'late' (symlinked) paths.
+        ksort($paths);
+        $this->text = new $class_locale_text($language, $paths);
     }
 
     /**
