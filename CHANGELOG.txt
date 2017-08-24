@@ -1,3 +1,8 @@
+SimpleComplex/Locale 1.x, 2017-08-24
+------------------------------------
+- CLI commands must respect new command 'silent' property.
+- CLI 'get' command default to print instead default to return the value.
+
 SimpleComplex/Locale 1.x, 2017-08-23
 ------------------------------------
 - Sort text ini file paths, to allow predictable override of common texts.
