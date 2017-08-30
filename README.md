@@ -1,6 +1,6 @@
 ## Locale ##
 
-#### Requirements ####
+### Requirements ###
 
 - PHP >=7.0
 - [SimpleComplex Config](https://github.com/simplecomplex/php-config)
