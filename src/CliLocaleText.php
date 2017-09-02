@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace SimpleComplex\Locale;
 
-use SimpleComplex\Utils\CliCommandInterface;
+use SimpleComplex\Utils\Interfaces\CliCommandInterface;
 use SimpleComplex\Utils\CliEnvironment;
 use SimpleComplex\Utils\CliCommand;
 use SimpleComplex\Utils\Dependency;
