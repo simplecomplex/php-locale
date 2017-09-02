@@ -23,7 +23,7 @@ use SimpleComplex\Config\IniSectionedFlatConfig;
  * In the end, text item identifiers (context, section+key) is the only thing
  * that works reliably.
  *
- * @see \SimpleComplex\Config\SectionedConfigInterface
+ * @see \SimpleComplex\Config\Interfaces\SectionedConfigInterface
  *
  * @package SimpleComplex\Locale
  */

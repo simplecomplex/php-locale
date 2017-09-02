@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace SimpleComplex\Locale;
 
 use SimpleComplex\Utils\Exception\ConfigurationException;
-use SimpleComplex\Config\SectionedConfigInterface;
+use SimpleComplex\Config\Interfaces\SectionedConfigInterface;
 
 /**
  * Factory which maps locale and/or language to supported/default,

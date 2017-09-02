@@ -11,7 +11,7 @@ namespace SimpleComplex\Locale;
 
 use SimpleComplex\Utils\Explorable;
 use SimpleComplex\Utils\Dependency;
-use SimpleComplex\Config\SectionedConfigInterface;
+use SimpleComplex\Config\Interfaces\SectionedConfigInterface;
 use SimpleComplex\Locale\Exception\TextIdentifierException;
 use SimpleComplex\Locale\Exception\TextNotFoundException;
 
