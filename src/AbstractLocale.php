@@ -237,7 +237,7 @@ abstract class AbstractLocale extends Explorable
      *      List of placeholders and values.
      *      Placeholder 'name' will be used on text content '... %name ...'.
      * @param string $default
-     *      Only used an argument passed.
+     *      Only used if an argument passed.
      *
      * @return string
      *
