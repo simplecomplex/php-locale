@@ -3,6 +3,12 @@
 - [Installation](#installation)
 - [Requirements](#requirements)
 
+
+#### Dependency injection container ID: locale ####
+
+Recommendation: access (and thus instantiate) locale via DI container ID 'locale'.  
+See [SimpleComplex Utils](https://github.com/simplecomplex/php-utils) ``` Dependency ```.
+
 ### CLI commands ###
 
 ```bash
