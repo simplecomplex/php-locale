@@ -47,3 +47,7 @@ and modify it to suit the current system's structure and features.
 - PHP >=7.0
 - [SimpleComplex Config](https://github.com/simplecomplex/php-config)
 - [SimpleComplex Utils](https://github.com/simplecomplex/php-utils)
+
+##### Suggestions #####
+
+- [SimpleComplex Inspect](https://github.com/simplecomplex/inspect)
