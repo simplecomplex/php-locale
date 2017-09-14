@@ -12,6 +12,9 @@ namespace SimpleComplex\Locale;
 /**
  * Locale da-dk.
  *
+ * @cache-store config.locale-text_da-dk
+ *      Name of cache store used by this class (effectively).
+ *
  * @package SimpleComplex\Locale
  */
 class LocaleDaDk extends AbstractLocale

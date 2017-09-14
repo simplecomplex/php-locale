@@ -23,6 +23,9 @@ use SimpleComplex\Config\IniSectionedFlatConfig;
  * In the end, text item identifiers (context, section+key) is the only thing
  * that works reliably.
  *
+ * @cache-store config.locale-text_[xx-yy]
+ *      Name of cache store used by this class (effectively).
+ *
  * @see \SimpleComplex\Config\Interfaces\SectionedConfigInterface
  *
  * @package SimpleComplex\Locale

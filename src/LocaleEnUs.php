@@ -12,6 +12,9 @@ namespace SimpleComplex\Locale;
 /**
  * Locale en-us.
  *
+ * @cache-store config.locale-text_en-us
+ *      Name of cache store used by this class (effectively).
+ *
  * @package SimpleComplex\Locale
  */
 class LocaleEnUs extends AbstractLocale
