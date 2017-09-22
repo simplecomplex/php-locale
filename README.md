@@ -7,7 +7,7 @@ Texts are referred by (free format) IDs.
 
 Superior to gettext (.po) in these ways:
 - texts (translations) don't get _orphaned_ when you change the source text  
-- editors/translators can work in standard text editors
+- editors/translators work in standard plaintext editors
 - texts can be organised in groups and sub groups.
 - no need for complex parsers and im-/export features, databases etc.
 - miniscule resource footprint
