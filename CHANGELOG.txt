@@ -1,3 +1,8 @@
+SimpleComplex/Locale 1.x, 2017-09-22
+------------------------------------
+- Locale-text no longer risk that dupe key string values become array.
+  Removed warnings from documentation.
+
 SimpleComplex/Locale 1.x, 2017-09-03
 ------------------------------------
 - Locale text() 'default' parameter.
