@@ -1,10 +1,28 @@
 ## Locale ##
 
-- [Installation](#installation)
-- [Requirements](#requirements)
+### Localization, primarily of texts ###
 
+Texts are referred by (free format) IDs.  
+.ini-file based.
 
-#### Dependency injection container ID: locale ####
+Superior to gettext (.po) in these ways:
+- texts (translations) don't get _orphaned_ when you change the source text  
+- editors/translators can work in standard text editors
+- texts can be organised in groups and sub groups.
+- no need for complex parsers and im-/export features, databases etc.
+- miniscule resource footprint
+
+### .ini-file example ###
+
+```ini
+[some-group]
+meeting = reunión
+some-sub-group[start] = ¡Hola!
+some-sub-group[continue] = ¿Cómo estás?
+some-sub-group[end] = Hasta luego...
+```
+
+### Dependency injection container ID: locale ###
 
 Recommendation: access (and thus instantiate) locale via DI container ID 'locale'.  
 See [SimpleComplex Utils](https://github.com/simplecomplex/php-utils) ``` Dependency ```.

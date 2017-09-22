@@ -1,8 +1,8 @@
 {
     "name": "simplecomplex/locale",
     "type": "library",
-    "description": "Locale and language utilities, .ini configuration based localisation.",
-    "keywords": ["configuration", "locale", "PHP"],
+    "description": "Locale and language utilities, .ini configuration based localization.",
+    "keywords": ["localization", "locale", "configuration", "PHP"],
     "homepage": "https://github.com/simplecomplex/php-locale",
     "license": "MIT",
     "authors": [
