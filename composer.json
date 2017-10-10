@@ -14,7 +14,7 @@
     "require": {
         "php": ">=7.0",
         "simplecomplex/utils": "^1.1 || dev-develop",
-        "simplecomplex/config": "^1.1 || dev-develop"
+        "simplecomplex/config": "^1.2 || dev-develop"
     },
     "suggest": {
         "simplecomplex/inspect": "CLI features do NOT work without Inspect. And great for logging; better variable dumps and traces."

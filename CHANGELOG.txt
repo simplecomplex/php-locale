@@ -1,3 +1,8 @@
+SimpleComplex/Locale 1.x, 2017-10-10
+------------------------------------
+- Allow long keys; 128 instead of 64 chars.
+- Release 1.1.
+
 SimpleComplex/Locale 1.x, 2017-09-24
 ------------------------------------
 - Release 1.0.

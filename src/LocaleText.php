@@ -33,6 +33,13 @@ use SimpleComplex\Config\IniSectionedFlatConfig;
 class LocaleText extends IniSectionedFlatConfig
 {
     /**
+     * Allow long keys.
+     *
+     * @var bool
+     */
+    const CACHE_KEY_LONG = true;
+
+    /**
      * Expects and will handle illegal .ini key names.
      *
      * @see \SimpleComplex\Config\IniConfigBase::$escapeSourceKeys
