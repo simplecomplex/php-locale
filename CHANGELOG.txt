@@ -1,3 +1,7 @@
+SimpleComplex/Locale 1.x, 2017-12-07
+------------------------------------
+- CLI locale-text-set do check for missing value argument.
+
 SimpleComplex/Locale 1.x, 2017-10-10
 ------------------------------------
 - Allow long keys; 128 instead of 64 chars.

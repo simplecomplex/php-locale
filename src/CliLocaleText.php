@@ -337,7 +337,13 @@ class CliLocaleText implements CliCommandInterface
                 $this->command->inputErrors[] = 'Invalid \'key\' argument.';
             }
         }
-        $value = $this->command->arguments['value'];
+        $value = '';
+        if (!isset($this->command->arguments['value'])) {
+            $this->command->inputErrors[] = !isset($this->command->arguments['value']) ?
+                'Missing \'value\' argument.' : 'Empty \'value\' argument.';
+        } else {
+            $value = '' . $this->command->arguments['value'];
+        }
 
         if ($this->command->inputErrors) {
             foreach ($this->command->inputErrors as $msg) {
