@@ -26,7 +26,7 @@ use SimpleComplex\Locale\Exception\TextNotFoundException;
  *
  * @see Locale
  *
- * @dependency-injection-container locale
+ * @dependency-injection-container-id locale
  *
  * @property-read string $locale
  * @property-read string $language
