@@ -127,8 +127,14 @@ class CliLocaleText implements CliCommandInterface
                 [
                     'language' => 'Like da-dk.',
                 ],
-                [],
-                []
+                [
+                    'allow-none' => 'Allow no locale-texts at all.',
+                    'verbose' => 'List source .ini-files used.',
+                ],
+                [
+                    'z' => 'allow-none',
+                    'v' => 'verbose',
+                ]
             ),
             new CliCommand(
                 $this,
@@ -570,6 +576,8 @@ class CliLocaleText implements CliCommandInterface
                 $this->command->inputErrors[] = 'Invalid \'language\' argument.';
             }
         }
+        $allow_none = !empty($this->command->options['allow-none']);
+        $verbose = !empty($this->command->options['verbose']);
         // Pre-confirmation --yes/-y ignored for this command.
         if ($this->environment->riskyCommandRequireConfirm && $this->command->preConfirmed) {
             $this->command->inputErrors[] = 'Pre-confirmation \'yes\'/-y option not supported for this command,'
@@ -644,7 +652,7 @@ class CliLocaleText implements CliCommandInterface
             exit;
         }
         // Do it.
-        if (!$locale_text->refresh()) {
+        if (!$locale_text->refresh($allow_none, $verbose)) {
             $this->environment->echoMessage('Failed to refresh locale-text language[' . $language . '].', 'error');
         } elseif (!$this->command->silent) {
             $this->environment->echoMessage('Refreshed locale-text language[' . $language . '].', 'success');

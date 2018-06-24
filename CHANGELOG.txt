@@ -1,3 +1,7 @@
+SimpleComplex/Locale 1.x, 2018-06-24
+------------------------------------
+- CLI locale-text-refresh options allow-none and verbose.
+
 SimpleComplex/Locale 1.x, 2017-12-07
 ------------------------------------
 - CLI locale-text-set do check for missing value argument.
