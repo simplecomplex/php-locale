@@ -11,6 +11,7 @@ namespace SimpleComplex\Locale;
 
 use SimpleComplex\Utils\Explorable;
 use SimpleComplex\Utils\Dependency;
+use SimpleComplex\Utils\Utils;
 use SimpleComplex\Config\Interfaces\SectionedConfigInterface;
 use SimpleComplex\Locale\Exception\TextIdentifierException;
 use SimpleComplex\Locale\Exception\TextNotFoundException;
@@ -217,9 +218,11 @@ abstract class AbstractLocale extends Explorable
         $this->language = $language;
         $class_locale_text = static::CLASS_LOCALE_TEXT;
         $paths = $config->get(static::CONFIG_SECTION, 'localeTextPaths', []);
-        // Sort paths to allow applications to override common translations
-        // by using alphanerically 'late' (symlinked) paths.
-        ksort($paths);
+        $vendor_dir = Utils::getInstance()->vendorDir();
+        foreach ($paths as &$path) {
+            $path = $vendor_dir . '/' . $path;
+        }
+        unset($path);
         $this->text = new $class_locale_text($language, $paths);
     }
 

@@ -1,3 +1,13 @@
+SimpleComplex/Locale 2.x, 2018-06-24
+------------------------------------
+- Config localeTextPaths are now relative to vendor dir (not document root);
+  thus new major version because will break stuff for existing users.
+- No longer sorts localeTextPaths to allow applications to override common
+  translations by using alphanerically 'late' paths. Because that strategy is
+  horrid (Drupal7esque). And ordering packages' config .ini files by vendor
+  is a fine strategy; supported since Config 2.0.
+- Release 2.0.
+
 SimpleComplex/Locale 1.x, 2018-06-24
 ------------------------------------
 - CLI locale-text-refresh options allow-none and verbose.
