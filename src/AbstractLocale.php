@@ -218,9 +218,12 @@ abstract class AbstractLocale extends Explorable
         $this->language = $language;
         $class_locale_text = static::CLASS_LOCALE_TEXT;
         $paths = $config->get(static::CONFIG_SECTION, 'localeTextPaths', []);
+        // localeTextPaths are relative to vendor dir, unless absolute.
         $vendor_dir = Utils::getInstance()->vendorDir();
         foreach ($paths as &$path) {
-            $path = $vendor_dir . '/' . $path;
+            if ($path{0} !== '/' && strpos($path, $vendor_dir . '/') !== 0) {
+                $path = $vendor_dir . '/' . $path;
+            }
         }
         unset($path);
         $this->text = new $class_locale_text($language, $paths);

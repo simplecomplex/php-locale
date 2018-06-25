@@ -1,3 +1,10 @@
+SimpleComplex/Locale 2.x, 2018-06-25
+------------------------------------
+- Fixed that CLI didn't know that global config localeTextPaths are relative
+  to the vendor dir.
+- Support that an localeTextPaths item is an absolute path.
+- Release 2.0.1.
+
 SimpleComplex/Locale 2.x, 2018-06-24
 ------------------------------------
 - Config localeTextPaths are now relative to vendor dir (not document root);

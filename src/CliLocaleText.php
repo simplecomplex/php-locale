@@ -13,6 +13,7 @@ use SimpleComplex\Utils\Interfaces\CliCommandInterface;
 use SimpleComplex\Utils\CliEnvironment;
 use SimpleComplex\Utils\CliCommand;
 use SimpleComplex\Utils\Dependency;
+use SimpleComplex\Utils\Utils;
 use SimpleComplex\Config\Config;
 use SimpleComplex\Config\ConfigKey;
 
@@ -252,7 +253,7 @@ class CliLocaleText implements CliCommandInterface
             $config = new $config_class('global');
         }
         $locale_text_paths = $config->get('lib_simplecomplex_locale', 'localeTextPaths');
-        if (!$locale_text_paths || !is_array($locale_text_paths)) {
+        if (!$locale_text_paths) {
             $this->environment->echoMessage(
                 'Global config misses item section[lib_simplecomplex_locale] key[localeTextPaths].',
                 'warning'
@@ -266,6 +267,14 @@ class CliLocaleText implements CliCommandInterface
             );
             exit;
         }
+        // localeTextPaths are relative to vendor dir, unless absolute.
+        $vendor_dir = Utils::getInstance()->vendorDir();
+        foreach ($locale_text_paths as &$path) {
+            if ($path{0} !== '/' && strpos($path, $vendor_dir . '/') !== 0) {
+                $path = $vendor_dir . '/' . $path;
+            }
+        }
+        unset($path);
         // Do it.
         $locale_text_class = static::CLASS_LOCALE_TEXT;
         /** @var LocaleText $locale_text */
@@ -372,7 +381,7 @@ class CliLocaleText implements CliCommandInterface
             $config = new $config_class('global');
         }
         $locale_text_paths = $config->get('lib_simplecomplex_locale', 'localeTextPaths');
-        if (!$locale_text_paths || !is_array($locale_text_paths)) {
+        if (!$locale_text_paths) {
             $this->environment->echoMessage(
                 'Global config misses item section[lib_simplecomplex_locale] key[localeTextPaths].',
                 'warning'
@@ -386,6 +395,15 @@ class CliLocaleText implements CliCommandInterface
             );
             exit;
         }
+        // localeTextPaths are relative to vendor dir, unless absolute.
+        $vendor_dir = Utils::getInstance()->vendorDir();
+        foreach ($locale_text_paths as &$path) {
+            if ($path{0} !== '/' && strpos($path, $vendor_dir . '/') !== 0) {
+                $path = $vendor_dir . '/' . $path;
+            }
+        }
+        unset($path);
+        // Do it.
         $locale_text_class = static::CLASS_LOCALE_TEXT;
         /** @var LocaleText $locale_text */
         $locale_text = new $locale_text_class($language, $locale_text_paths);
@@ -495,7 +513,7 @@ class CliLocaleText implements CliCommandInterface
             $config = new $config_class('global');
         }
         $locale_text_paths = $config->get('lib_simplecomplex_locale', 'localeTextPaths');
-        if (!$locale_text_paths || !is_array($locale_text_paths)) {
+        if (!$locale_text_paths) {
             $this->environment->echoMessage(
                 'Global config misses item section[lib_simplecomplex_locale] key[localeTextPaths].',
                 'warning'
@@ -509,6 +527,15 @@ class CliLocaleText implements CliCommandInterface
             );
             exit;
         }
+        // localeTextPaths are relative to vendor dir, unless absolute.
+        $vendor_dir = Utils::getInstance()->vendorDir();
+        foreach ($locale_text_paths as &$path) {
+            if ($path{0} !== '/' && strpos($path, $vendor_dir . '/') !== 0) {
+                $path = $vendor_dir . '/' . $path;
+            }
+        }
+        unset($path);
+        // Do it.
         $locale_text_class = static::CLASS_LOCALE_TEXT;
         /** @var LocaleText $locale_text */
         $locale_text = new $locale_text_class($language, $locale_text_paths);
@@ -605,7 +632,7 @@ class CliLocaleText implements CliCommandInterface
             $config = new $config_class('global');
         }
         $locale_text_paths = $config->get('lib_simplecomplex_locale', 'localeTextPaths');
-        if (!$locale_text_paths || !is_array($locale_text_paths)) {
+        if (!$locale_text_paths) {
             $this->environment->echoMessage(
                 'Global config misses item section[lib_simplecomplex_locale] key[localeTextPaths].',
                 'warning'
@@ -619,6 +646,15 @@ class CliLocaleText implements CliCommandInterface
             );
             exit;
         }
+        // localeTextPaths are relative to vendor dir, unless absolute.
+        $vendor_dir = Utils::getInstance()->vendorDir();
+        foreach ($locale_text_paths as &$path) {
+            if ($path{0} !== '/' && strpos($path, $vendor_dir . '/') !== 0) {
+                $path = $vendor_dir . '/' . $path;
+            }
+        }
+        unset($path);
+        // Do it.
         $locale_text_class = static::CLASS_LOCALE_TEXT;
         /** @var LocaleText $locale_text */
         $locale_text = new $locale_text_class($language, $locale_text_paths);
@@ -724,7 +760,7 @@ class CliLocaleText implements CliCommandInterface
             $config = new $config_class('global');
         }
         $locale_text_paths = $config->get('lib_simplecomplex_locale', 'localeTextPaths');
-        if (!$locale_text_paths || !is_array($locale_text_paths)) {
+        if (!$locale_text_paths) {
             $this->environment->echoMessage(
                 'Global config misses item section[lib_simplecomplex_locale] key[localeTextPaths].',
                 'warning'
@@ -738,6 +774,15 @@ class CliLocaleText implements CliCommandInterface
             );
             exit;
         }
+        // localeTextPaths are relative to vendor dir, unless absolute.
+        $vendor_dir = Utils::getInstance()->vendorDir();
+        foreach ($locale_text_paths as &$path) {
+            if ($path{0} !== '/' && strpos($path, $vendor_dir . '/') !== 0) {
+                $path = $vendor_dir . '/' . $path;
+            }
+        }
+        unset($path);
+        // Do it.
         $locale_text_class = static::CLASS_LOCALE_TEXT;
         /** @var LocaleText $locale_text */
         $locale_text = new $locale_text_class($language, $locale_text_paths);
