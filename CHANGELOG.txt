@@ -1,8 +1,9 @@
-SimpleComplex/Locale 2.x, 2018-07-28
+SimpleComplex/Locale 2.x, 2018-07-29
 ------------------------------------
 - Register CLI command provider in document root .ini file.
   And don't provide own cli.phpsh; rely on the Utils' package's generic
   cli.phpsh.
+- Release 2.1.
 
 SimpleComplex/Locale 2.x, 2018-06-25
 ------------------------------------
