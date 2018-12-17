@@ -31,8 +31,8 @@ use SimpleComplex\Config\ConfigKey;
  *
  * @code
  * # CLI
- * cd vendor/simplecomplex/locale/src/cli
- * php cli.phpsh locale-text -h
+ * cd vendor/simplecomplex/utils/src/cli
+ * php cli.php locale-text -h
  * @endcode
  *
  * @package SimpleComplex\Locale

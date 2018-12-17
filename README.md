@@ -31,24 +31,24 @@ See [SimpleComplex Utils](https://github.com/simplecomplex/php-utils) ``` Depend
 
 ```bash
 # List all locale-text commands and their help.
-php cli.phpsh locale-text -h
+php cli.php locale-text -h
 # One command's help.
-php cli.phpsh locale-text-xxx -h
+php cli.php locale-text-xxx -h
 
 # Display/get value of a locale-text item.
-php cli.phpsh locale-text-get language section key
+php cli.php locale-text-get language section key
 
 # Set a locale-text item.
-php cli.phpsh locale-text-set language section key value
+php cli.php locale-text-set language section key value
 
 # Delete a locale-text item.
-php cli.phpsh locale-text-delete language section key
+php cli.php locale-text-delete language section key
 
 # Refresh a locale-text store from .locale-text.[language].ini file sources.
-php cli.phpsh locale-text-refresh language
+php cli.php locale-text-refresh language
 
 # Export a locale-text store as JSON to a file.
-php cli.phpsh locale-text-export language target-path-and-file
+php cli.php locale-text-export language target-path-and-file
 ```
 
 ### Installation ###
