@@ -2,7 +2,7 @@
 /**
  * SimpleComplex PHP Locale
  * @link      https://github.com/simplecomplex/php-locale
- * @copyright Copyright (c) 2017 Jacob Friis Mathiasen
+ * @copyright Copyright (c) 2017-2019 Jacob Friis Mathiasen
  * @license   https://github.com/simplecomplex/php-locale/blob/master/LICENSE (MIT License)
  */
 declare(strict_types=1);
@@ -276,9 +276,11 @@ abstract class AbstractLocale extends Explorable
         }
 
         $text = $this->text->get($key_path[0], $key_path[1], false);
+        $use_default = false;
         if ($text === false) {
             if (func_num_args() > 2) {
                 // Use arg default if argument actually passed.
+                $use_default = true;
                 $text = $default;
             }
             else {
@@ -297,44 +299,46 @@ abstract class AbstractLocale extends Explorable
                 return str_replace('%identifier', $identifier, static::TEXT_NOT_FOUND_TEXT);
             }
         }
-        $is_array = is_array($text);
-        if ($n_keys == 2) {
-            // Must be string.
-            if ($is_array) {
-                throw new TextIdentifierException(
-                    'Locale text identifier misses sub item part, identifier[' . $identifier . '] is a list.'
-                );
-            }
-        } else {
-            // Must be array.
-            if (!$is_array) {
-                throw new TextIdentifierException(
-                    'Locale text identifier has surplus sub item part, section+key['
-                    . $key_path[0] . ':' . $key_path[1] . '] is string not list.'
-                );
-            }
-            if (!isset($text[$key_path[2]])) {
-                if (func_num_args() > 2) {
-                    // Use arg default if argument actually passed.
-                    $text = $default;
-                }
-                else {
-                    // Err if missing text should count as an error.
-                    if ($this->config->get(static::CONFIG_SECTION, 'localeTextErrNotFound', true)) {
-                        throw new TextNotFoundException(
-                            'Locale text not found, identifier[' . $identifier . '].'
-                        );
-                    }
-                    $container = Dependency::container();
-                    if ($container->has('logger')) {
-                        $container->get('logger')->warning('Locale text not found, identifier[{identifier}].', [
-                            'identifier' => $identifier,
-                        ]);
-                    }
-                    return str_replace('%identifier', $identifier, static::TEXT_NOT_FOUND_TEXT);
+        if (!$use_default) {
+            $is_array = is_array($text);
+            if ($n_keys == 2) {
+                // Must be string.
+                if ($is_array) {
+                    throw new TextIdentifierException(
+                        'Locale text identifier misses sub item part, identifier[' . $identifier . '] is a list.'
+                    );
                 }
             } else {
-                $text = $text[$key_path[2]];
+                // Must be array.
+                if (!$is_array) {
+                    throw new TextIdentifierException(
+                        'Locale text identifier has surplus sub item part, section+key['
+                        . $key_path[0] . ':' . $key_path[1] . '] is string not list.'
+                    );
+                }
+                if (!isset($text[$key_path[2]])) {
+                    if (func_num_args() > 2) {
+                        // Use arg default if argument actually passed.
+                        $text = $default;
+                    }
+                    else {
+                        // Err if missing text should count as an error.
+                        if ($this->config->get(static::CONFIG_SECTION, 'localeTextErrNotFound', true)) {
+                            throw new TextNotFoundException(
+                                'Locale text not found, identifier[' . $identifier . '].'
+                            );
+                        }
+                        $container = Dependency::container();
+                        if ($container->has('logger')) {
+                            $container->get('logger')->warning('Locale text not found, identifier[{identifier}].', [
+                                'identifier' => $identifier,
+                            ]);
+                        }
+                        return str_replace('%identifier', $identifier, static::TEXT_NOT_FOUND_TEXT);
+                    }
+                } else {
+                    $text = $text[$key_path[2]];
+                }
             }
         }
 

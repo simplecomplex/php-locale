@@ -1,3 +1,9 @@
+SimpleComplex/Locale 2.x, 2019-02-23
+------------------------------------
+- text() retrieval method shan't err on missing entry when arg identifier
+  indicates section:key:sub but arg default is given.
+- Release 2.1.2.
+
 SimpleComplex/Locale 2.x, 2018-07-29
 ------------------------------------
 - Register CLI command provider in document root .ini file.
